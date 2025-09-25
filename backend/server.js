@@ -23,6 +23,11 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
+if (!process.env.MONGO_URL) {
+  console.error('Error: MONGO_URL not set!');
+  process.exit(1);
+}
+
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log('MongoDB connected'))
@@ -36,20 +41,26 @@ app.use('/api/food', foodRouter);
 app.use('/api/user', userRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
-app.use('/images', express.static('uploads'));
+app.use('/images', express.static(path.join(__dirname, 'uploads')));
 
-// Serve frontend static files
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
+// Serve frontend build
+const frontendPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendPath));
 
 // Root endpoint
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 // Catch-all for React routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+  if (req.originalUrl.startsWith('/api')) {
+    return res.status(404).json({ message: 'API route not found' });
+  }
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 // Start server
-app.listen(port, () => console.log(`Server running on port ${port}`));
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
