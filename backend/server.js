@@ -23,15 +23,10 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
-if (!process.env.MONGO_URL) {
-  console.error("MONGO_URL is missing!");
-  process.exit(1);
-}
-
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log('MongoDB connected'))
-  .catch((err) => {
+  .catch(err => {
     console.error('MongoDB connection error:', err);
     process.exit(1);
   });
@@ -41,24 +36,21 @@ app.use('/api/food', foodRouter);
 app.use('/api/user', userRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
+app.use('/images', express.static('uploads'));
 
-// Images folder
-app.use('/images', express.static(path.join(__dirname, 'uploads')));
-
-// Serve frontend static files from "public" (copied from frontend/dist)
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve frontend static files
+const frontendPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendPath));
 
 // Root endpoint
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 // Catch-all for React routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 // Start server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+app.listen(port, () => console.log(`Server running on port ${port}`));
