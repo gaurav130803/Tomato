@@ -4,7 +4,14 @@ import userModel from "../models/userModel.js";
 import Stripe from "stripe"
 
 
-const stripe= new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripeKey = process.env.STRIPE_KEY;
+
+if (!stripeKey) {
+  console.error("STRIPE_KEY is missing!");
+  process.exit(1); // Stop app if key missing
+}
+
+const stripe = new Stripe(stripeKey);
 
 //placing user order from frontend
 const placeOrder = async (req,res)=>{
