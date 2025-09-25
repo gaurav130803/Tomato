@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { connectDB } from './config/db.js';
+import mongoose from 'mongoose';
 import foodRouter from './routes/foodRoute.js';
 import userRouter from './routes/userRoute.js';
 import cartRouter from './routes/cartRoute.js';
@@ -21,8 +21,15 @@ const port = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-// DB connection
-connectDB();
+// MongoDB connection
+const MONGO_URL = process.env.MONGO_URL;
+mongoose
+  .connect(MONGO_URL)
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+  });
 
 // API routes
 app.use('/api/food', foodRouter);
@@ -31,10 +38,10 @@ app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
 app.use('/images', express.static('uploads'));
 
-// Serve frontend static files if exists
+// Serve frontend static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Root API endpoint
+// Root endpoint
 app.get('/', (req, res) => {
   res.send('Hello World from Azure 🚀');
 });

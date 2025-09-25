@@ -1,0 +1,47 @@
+name: Build and Deploy Tomato App to Azure
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      # Install backend dependencies
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm install
+
+      # Build frontend if exists
+      - name: Build frontend
+        run: |
+          if [ -f ./frontend/package.json ]; then
+            cd frontend
+            npm install
+            npm run build
+            rm -rf ../backend/public
+            cp -r build ../backend/public
+          else
+            echo "No frontend folder found, skipping"
+          fi
+
+      # Deploy backend folder directly to Azure
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'GC-Test'                        # Azure App Service name
+          slot-name: 'Production'
+          package: ./backend
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
