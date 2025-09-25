@@ -24,14 +24,14 @@ app.use(express.json());
 
 // MongoDB connection
 if (!process.env.MONGO_URL) {
-  console.error('Error: MONGO_URL not set!');
+  console.error("MONGO_URL is missing!");
   process.exit(1);
 }
 
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log('MongoDB connected'))
-  .catch(err => {
+  .catch((err) => {
     console.error('MongoDB connection error:', err);
     process.exit(1);
   });
@@ -41,23 +41,21 @@ app.use('/api/food', foodRouter);
 app.use('/api/user', userRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
+
+// Images folder
 app.use('/images', express.static(path.join(__dirname, 'uploads')));
 
-// Serve frontend build
-const frontendPath = path.join(__dirname, '../frontend/dist');
-app.use(express.static(frontendPath));
+// Serve frontend static files from "public" (copied from frontend/dist)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Root endpoint
 app.get('/', (req, res) => {
-  res.sendFile(path.join(frontendPath, 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Catch-all for React routes
 app.get('*', (req, res) => {
-  if (req.originalUrl.startsWith('/api')) {
-    return res.status(404).json({ message: 'API route not found' });
-  }
-  res.sendFile(path.join(frontendPath, 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start server
