@@ -1,19 +1,20 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import 'dotenv/config';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Routes
 import foodRouter from './routes/foodRoute.js';
 import userRouter from './routes/userRoute.js';
 import cartRouter from './routes/cartRoute.js';
 import orderRouter from './routes/orderRoute.js';
-import 'dotenv/config';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 // Fix __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// App config
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -22,11 +23,10 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
-const MONGO_URL = process.env.MONGO_URL;
 mongoose
-  .connect(MONGO_URL)
+  .connect(process.env.MONGO_URL)
   .then(() => console.log('MongoDB connected'))
-  .catch((err) => {
+  .catch(err => {
     console.error('MongoDB connection error:', err);
     process.exit(1);
   });
@@ -39,19 +39,17 @@ app.use('/api/order', orderRouter);
 app.use('/images', express.static('uploads'));
 
 // Serve frontend static files
-app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 // Root endpoint
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
-// For all other routes
+// Catch-all for React routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
 // Start server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+app.listen(port, () => console.log(`Server running on port ${port}`));

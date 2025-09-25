@@ -1,4 +1,4 @@
-name: Build and Deploy Tomato App to Azure
+name: Deploy MERN app to Azure
 
 on:
   push:
@@ -7,41 +7,35 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # Checkout repo
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js 22
+      # Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22.x'
 
       # Install backend dependencies
-      - name: Install backend dependencies
+      - name: Install backend
         working-directory: ./backend
         run: npm install
 
-      # Build frontend if exists
+      # Install frontend dependencies and build
       - name: Build frontend
+        working-directory: ./frontend
         run: |
-          if [ -f ./frontend/package.json ]; then
-            cd frontend
-            npm install
-            npm run build
-            rm -rf ../backend/public
-            cp -r build ../backend/public
-          else
-            echo "No frontend folder found, skipping"
-          fi
+          npm install
+          npm run build
 
-      # Deploy backend folder directly to Azure
+      # Deploy to Azure
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'GC-Test'                        # Azure App Service name
-          slot-name: 'Production'
+          app-name: 'gc-test' # your Azure app name
           package: ./backend
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
