@@ -39,16 +39,16 @@ app.use('/api/order', orderRouter);
 app.use('/images', express.static('uploads'));
 
 // Serve frontend static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
 
 // Root endpoint
 app.get('/', (req, res) => {
-  res.send('Hello World from Azure 🚀');
+  res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
 });
 
-// Serve frontend for all other routes
+// For all other routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
 });
 
 // Start server
