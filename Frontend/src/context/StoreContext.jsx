@@ -6,7 +6,7 @@ export const StoreContext = createContext(null)
 const StoreContextProvider = (props) => {
 
     const [cartItems, setCartItems] = useState({});
-    const url="https://gc-test-gpa9brh8hxguexhd.centralindia-01.azurewebsites.net";
+    const url=import.meta.env.VITE_API_URL;
     
     //token
     const [token,setToken]=useState("");
