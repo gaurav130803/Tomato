@@ -19,7 +19,11 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "https://gc-test-gpa9brh8hxguexhd.centralindia-01.azurewebsites.net",
+  credentials: true
+}));
+
 app.use(express.json());
 
 // MongoDB connection
@@ -47,6 +51,11 @@ app.use(express.static(frontendPath));
 // Root endpoint
 app.get('/', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+app.get('/api/food/list', async (req, res) => {
+  // test route
+  res.json({ message: 'API working!' });
 });
 
 // Catch-all for React routes
