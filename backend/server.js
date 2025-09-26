@@ -26,7 +26,7 @@ app.use(express.json());
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log('MongoDB connected'))
-  .catch(err => {
+  .catch((err) => {
     console.error('MongoDB connection error:', err);
     process.exit(1);
   });
@@ -36,11 +36,12 @@ app.use('/api/food', foodRouter);
 app.use('/api/user', userRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
-app.use('/images', express.static('uploads'));
+
+// Serve uploaded images
+app.use('/images', express.static(path.join(__dirname, 'uploads')));
 
 // Serve frontend static files
-// Serve frontend static files
-const frontendPath = path.join(__dirname, 'Frontend'); // backend/Frontend
+const frontendPath = path.join(__dirname, 'Frontend');
 app.use(express.static(frontendPath));
 
 // Root endpoint
