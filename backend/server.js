@@ -39,7 +39,8 @@ app.use('/api/order', orderRouter);
 app.use('/images', express.static('uploads'));
 
 // Serve frontend static files
-const frontendPath = path.join(__dirname, '../frontend/dist');
+// Serve frontend static files
+const frontendPath = path.join(__dirname, 'Frontend'); // backend/Frontend
 app.use(express.static(frontendPath));
 
 // Root endpoint
