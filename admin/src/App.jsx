@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
 
-  const url = "http://localhost:4000";
+  const url = "https://gc-test-gpa9brh8hxguexhd.centralindia-01.azurewebsites.net/";
   return (
     <div>
       <ToastContainer/>
