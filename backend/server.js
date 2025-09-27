@@ -20,7 +20,7 @@ const port = process.env.PORT || 4000;
 
 // Middleware
 app.use(cors({
-  origin: "https://gc-test-gpa9brh8hxguexhd.centralindia-01.azurewebsites.net",
+  origin: "https://gc-test.azurewebsites.net", // ✅ use your Azure domain
   credentials: true
 }));
 
@@ -44,8 +44,8 @@ app.use('/api/order', orderRouter);
 // Serve uploaded images
 app.use('/images', express.static(path.join(__dirname, 'uploads')));
 
-// Serve frontend static files
-const frontendPath = path.join(__dirname, 'Frontend');
+// ✅ Serve frontend static files from public
+const frontendPath = path.join(__dirname, 'public');
 app.use(express.static(frontendPath));
 
 // Root endpoint
@@ -53,12 +53,12 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
-app.get('/api/food/list', async (req, res) => {
-  // test route
-  res.json({ message: 'API working!' });
+// Test endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ message: 'API is working!' });
 });
 
-// Catch-all for React routes
+// Catch-all for React Router
 app.get('*', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
