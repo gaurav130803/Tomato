@@ -7,7 +7,7 @@ const List = ({url}) => {
     const [list,setList]=useState([]);
 
     const fetchList= async ()=>{
-        const response =await axios.get("https://gc-test-gpa9brh8hxguexhd.centralindia-01.azurewebsites.net/api/food/list");
+        const response =await axios.get(`${url}/api/food/list`);
        
         if(response.data.success){
             setList(response.data.data);
