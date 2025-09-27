@@ -31,7 +31,6 @@ jobs:
         run: |
           npm install
           npm run build
-
       # Deploy to Azure
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
@@ -39,3 +38,4 @@ jobs:
           app-name: 'gc-test' # your Azure app name
           package: ./backend
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+
